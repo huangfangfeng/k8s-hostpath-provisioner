@@ -8,7 +8,7 @@ will be implemented.
 ## Usage
 
 This provisioner requires custom kube-scheduler to be running in your cluster. You should edit your scheduler manifest and
-change container image there:
+change container image there:(already exist)
 
 ```yaml
 # ...
@@ -28,19 +28,16 @@ After you have running custom scheduler, install the provisioner:
 
 ```
 $ cd example
-$ kubectl create -f sa.yaml -f cluster-roles.yaml -f cluster-role-bindings.yaml -f ds.yaml
+$ kubectl create -f hostpath-provisioner.yaml
 ```
 
-Label all nodes that can provision hostPath volumes:
-
-```
-$ kubectl label node --all nailgun.name/hostpath=enabled
-```
 
 Now you can test it. You should annotate your nodes with information of available storage:
 
 ```
-$ kubectl annotate node NODE_NAME hostpath.nailgun.name/ssd=/tmp/ssd
+$ kubectl annotate node NODE_NAME hostpath.kubevirt.io/ssd=/tmp/ssd
+$ kubectl annotate node NODE_NAME hostpath.kubevirt.io/hdd=/tmp/hdd
+$ kubectl annotate node NODE_NAME hostpath.kubevirt.io/nvme=/tmp/nvme
 ```
 
 Then create test StorageClass, PVC and Pod:
@@ -52,11 +49,9 @@ $ kubectl create -f sc.yaml -f pvc.yaml -f test-pod.yaml
 The test-pod will be always scheduled on the same node where the PVC has been provisioned.
 
 Note StorageClass has `hostPathName` parameter equal to `ssd` which means that provisioner will search for a node having
-`hostpath.nailgun.name/ssd` annotation and it will use hostPath specified in the annotation. If you have more than one node
+`hostpath.kubevirt.io/ssd` annotation and it will use hostPath specified in the annotation. If you have more than one node
 with this annotation, node will be selected randomly.
 
-You can also explicity specify node for PVC by adding `nailgun.name/hostpath-node` annotation to the PVC with the node name.
-But the node should also match StorageClass.
 
 
 ## Limitations
