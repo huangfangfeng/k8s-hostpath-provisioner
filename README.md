@@ -8,7 +8,7 @@ will be implemented.
 ## Usage
 
 This provisioner requires custom kube-scheduler to be running in your cluster. You should edit your scheduler manifest and
-change container image there:(already exist)
+change container image there:  (already exist)
 
 ```yaml
 # ...
@@ -27,7 +27,6 @@ added)
 After you have running custom scheduler, install the provisioner:
 
 ```
-$ cd example
 $ kubectl create -f hostpath-provisioner.yaml
 ```
 
